@@ -1,0 +1,27 @@
+{% extends 'main/base.html' %}
+{%block content %}
+<h1>CODEFIGHT</h1>
+<div style="white-space: pre-wrap">
+    {% for m in messages %}
+    {{m|safe}}
+    {%endfor%}
+</div>
+<div>
+    <h6>YOURS INVITE LINKS (THE LINK IS VALID FOR 1 DAY)</h6>
+    <ul>
+        {% for m in msg %}
+        <li>
+            <a href={{m.pk}} style="text-decoration: none;">Codefight with {%if m.user1 == request.user.pk%} {{m.user2}}{%else%} {{m.user1}}{%endif%}</a>
+        </li>
+        {%endfor%}
+    </ul>
+</div>
+<div>
+    <form method="POST">
+        {%csrf_token%}
+        <input type="email" name="email">
+        <input type="submit" value="INVITE">
+    </form>
+</div>
+
+{%endblock%}

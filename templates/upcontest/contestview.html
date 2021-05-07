@@ -1,0 +1,33 @@
+{% extends 'main/base.html' %}
+{%load static %}
+{%block content%}
+<h1>UPCOMING CONTEST</h1>
+<style>
+    td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+      }
+    tr>:last-child
+    {text-align: right;
+
+    }
+</style>
+    <table>
+    <tr>
+    <th>PALTFORM</th>
+    <th>NAME</th>
+    <th>START TIME (+5:30 GMT)</th>
+    <th>END TIME / DURATION</th>
+    {% for obj in contest %}
+    <tr>
+    <td>{{obj.0}}</td>
+    <td><a href={{obj.1}} style="text-decoration: none;" target="_blank">{{obj.2}}</a></td>
+    <td>{{obj.3}}</td>
+    <td>{{obj.4}}</td>
+    </tr>
+    {%endfor%}
+   
+    </table>
+
+{%endblock%}

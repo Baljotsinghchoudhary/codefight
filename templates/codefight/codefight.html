@@ -1,0 +1,153 @@
+{% extends 'main/base.html' %}
+{%load static %}
+{%block content%}
+<h1>BATTLEFIELD   </h1>
+<div  style="white-space: pre-line;">
+  <h5>PROBLEM</h5>
+  <div id='problem'>
+  </div>
+  
+</div>
+<div style="margin: auto;float:right">
+  <h3 id='win'>WINNER</h6>
+  <div>
+  <textarea id='status' placeholder="MESSAGES" style="height:300px;width:200px;resize:none"
+    disabled></textarea>
+    </div>
+    <div>
+      <input type="text" id='ws_msg'>
+      <button type="submit" id='ws_send'>SEND</button>
+    </div>
+
+  
+</div>
+
+<div style="float: left;">
+<div style="height:500px;width:800px;position:relative;margin:auto;">
+<div id='editor' style=" position: absolute;
+top: 50px;
+right: 50px;
+bottom: 50px;
+left: 50px;
+border:1px solid black;">
+
+</div>
+
+</div>
+<div style="text-align:center;">
+  <label for="language">LANGUAGE</label>
+  <select name="lang" id="lang" onchange="setmode(this.value)">
+    <option value="C">C</option>
+    <option value="CPP11">CPP11</option>
+    <option value="PYTHON3">PYTHON3</option>
+    <option value="JAVA">JAVA</option>
+    <option value="JAVASCRIPT">JAVASCRIPT</option>
+    <option value="GO">GO</option>
+  </select>
+  <button onclick="compile()">COMPILE</button>
+  <button onclick="run()">RUN</button>
+</div>
+<div style="height:200px;width:700px;position:relative;margin:auto;padding:50px">
+  <textarea id='output' style="height:200px;width:600px;resize:none" default="OUTPUT" disabled
+    placeholder="OUPUT"></textarea>
+
+</div>
+</div>
+
+
+<script src="{% static 'javascript/ace-editor/src-noconflict/ace.js' %}" type="text/javascript"
+  charset="utf-8"></script>
+<script src="{% static 'javascript/ace-editor/src-noconflict/ext-language_tools.js' %}"></script>
+<script src="{% static 'javascript/codefight.js' %}"></script>
+
+<script>
+  function compile() {
+    var xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function () {
+      if (this.readyState == 4 && this.status == 200) {
+        let response = JSON.parse(this.responseText)
+        let output = ""
+        for (property in response) {
+          output += property + ': ' + response[property] + '\n';
+        }
+        let element = document.getElementById('output');
+        element.disabled = false;
+        element.innerHTML = output;
+        element.disabled = true;
+      }
+    };
+    let formdata = new FormData();
+    formdata.append('lang', document.getElementById('lang').value);
+    formdata.append('code', editor.getValue());
+    xhttp.open("POST", "{{request.path}}/compile", true);
+    xhttp.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+    xhttp.send(formdata);
+  };
+
+  function run() {
+    var xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function () {
+      if (this.readyState == 4 && this.status == 200) {
+        let response = JSON.parse(this.responseText)
+        let output = ""
+
+        for (property in response) {
+          output += property + ': ' + response[property] + '\n';
+        }
+        let element = document.getElementById('output');
+        element.disabled = false;
+        element.innerHTML = output;
+        element.disabled = true;
+      }
+    };
+    let formdata = new FormData();
+    formdata.append('lang', document.getElementById('lang').value);
+    formdata.append('code', editor.getValue());
+    xhttp.open("POST", "{{request.path}}/run", true);
+    xhttp.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+    xhttp.send(formdata);
+  };
+
+
+</script>
+<script>
+  var roomName = window.location.href.match(/\d+$/g);
+
+    ar chatSocket = new WebSocket(
+    'ws://' + window.location.host +
+    '/ws/chat/' + roomName);v
+
+    chatSocket.onmessage = function(e) {
+        var data = JSON.parse(e.data);
+        if(data['type']=='chat_message')
+        document.getElementById('status').innerHTML+=data['username']+': '+data['message']+"\n";
+        else if(data['type']=='problem_message'&&document.getElementById('problem').innerHTML!="")
+        {document.getElementById('problem').innerHTML=data['problem'];
+        document.getElementById('win').innerHTML="WINNER "+data['winner'];
+        }
+        else if(data['type']=='system_message')
+        { document.getElementById('win').innerHTML="WINNER "+data['winner']; 
+          alert("THE CHAMP IS "+data['winner'])
+           
+         
+        }
+    };
+
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+
+    document.getElementById('ws_send').onclick = function(e) {
+        var message = document.getElementById('ws_msg').value;
+        chatSocket.send(JSON.stringify({
+            'message': message
+        }));
+        document.getElementById('ws_msg').value=''
+
+       
+    };
+</script>
+{%endblock%}

@@ -1,0 +1,14 @@
+{% extends 'main/base.html'%}
+{%block content %}
+<div class="form-div">
+<h3>LOGIN</h3>
+{% include "main/form-default-view.html"%}
+<div class='form-ele'>
+    <ul>
+        <li><a href="{% url 'register' %}">REGISTER</a></li>
+        <li><a href="{% url 'password_reset' %}">FORGOT PASSWORD ?</a></li>
+    </ul>
+</div>
+</div>
+
+{%endblock%}

@@ -1,0 +1,34 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body >
+        <h1>CODFIGHT THINK TWICE CODE ONCE</h1>
+        {% if request.user.is_anonymous %}
+        <h3>
+        WELOCME GUEST
+        </h3>
+        {%else%}
+        <h3>
+        WELCOME {{request.user.first_name}}
+        </h3>
+        <a href="{% url 'logout' %}">LOGOUT</a>
+        {%endif%}
+
+   
+    <ul>
+    <li><a href="{% url 'login' %}">LOGIN</a></li>
+    <li><a href="{% url 'register' %}">REGISTER</a></li>
+    <li><a href="{% url 'codefight_home' %}">CODEFIGHT</a></li>
+    <li><a href="{%url 'upcoming_contest' %}">UPCOMING CONTEST</a></li>
+
+    </ul>
+    {%block content %}
+    {%endblock%}
+</body>
+</html>

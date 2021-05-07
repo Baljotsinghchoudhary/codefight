@@ -1,0 +1,30 @@
+    <form method="POST">
+        {%csrf_token%}
+    {% if form.non_field_errors %}
+        <div class="form-ele">
+            <ul>
+            {% for errors in form.non_field_errors %}
+                <li>{{errors}}</li>
+            {%endfor %}
+            </ul>
+        </div>
+    {%endif%}
+    {% for field in form.visible_fields %}
+    <div class="form-ele">
+        <ul>
+            {% for errors in field.errors %}
+                <li>{{errors}}</li>
+            {%endfor%}
+        </ul>
+        {{field.label_tag|linebreaks}}
+        {{field}}
+        {%if field.help_text %}
+        <div class="help_text">{{field.help_text}}</div>
+        {%endif%}
+    </div>
+    {%endfor%}
+    <div class="form-ele">
+        <button type="submit">SUBMIT</button>
+    </div>
+    </form>
+

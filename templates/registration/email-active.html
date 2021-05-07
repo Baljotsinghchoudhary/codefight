@@ -1,0 +1,8 @@
+{% autoescape off %}
+<h5>Thanks for Registring With Codefight </h5>
+<p>Your Email Address {{ email }}</p>
+<a href="http://{{ domain }}{% url 'activate' uidb64=uid token=token %}"  style="color:blue;text-decoration:underline">Click to Verify</a>
+
+Sincerely,
+The Codefight Team
+{% endautoescape %}
