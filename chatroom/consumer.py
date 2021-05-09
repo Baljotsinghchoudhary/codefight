@@ -12,9 +12,10 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self):
 
         self.room_id = self.scope['url_route']['kwargs']['room_id']
-        self.sharedLink = "Group-"+self.room_id   #send message to both the user
-        self.personalLink="Personal-"+self.room_id    #send message to single user
         self.user=self.scope['user']
+        self.sharedLink = "Group-"+self.room_id   #send message to both the user
+        self.personalLink="Personal-"+self.user.username+"-"+self.room_id    #send message to single user
+        
         result=await self.Verify()
         if result:
             await self.JoinGroup()  # Join room group
@@ -87,6 +88,12 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         await self.send_json(event)
 
     async def system_message(self,event): 
-        await CompileAndRun(**event,input=self.link.problem.input,output=self.link.problem.output,room_id=self.room_id)
+        await CompileAndRun(**event,input=self.link.problem.input,room_id=self.room_id)
+    
+    async def exec_resp_message(self,event):
+        await self.send_json(event)
+    
+    async def winner_message(self,event):
+        await self.send_json(event)
 
     
