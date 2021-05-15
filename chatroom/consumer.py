@@ -1,95 +1,99 @@
-from channels.generic.websocket import AsyncWebsocketConsumer
-import json
+from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from codefight.models import Link,problem
 from channels.layers import get_channel_layer
 from channels.db import database_sync_to_async
-import time
-import datetime
 from channels.exceptions import DenyConnection
 from django.contrib.auth.models import AnonymousUser
+import asyncio
+from codefight.services import CompileAndRun
 
-class ChatConsumer(AsyncWebsocketConsumer):
+class ChatConsumer(AsyncJsonWebsocketConsumer):
 
     async def connect(self):
-        self.room_name = self.scope['url_route']['kwargs']['room_name']
-        self.room_group_name = f"Group_{self.room_name}"
+
+        self.room_id = self.scope['url_route']['kwargs']['room_id']
         self.user=self.scope['user']
-        try:
-            link=await database_sync_to_async(Link.objects.get)(pk=self.room_name)
-            prob=await database_sync_to_async(problem.objects.get)(pk=link.problem_id)
-            if link.user1_id!=self.scope['user'].pk and link.user2_id!=self.scope['user'].pk:
-                raise Exception
+        self.sharedLink = "Group-"+self.room_id   #send message to both the user
+        self.personalLink="Personal-"+self.user.username+"-"+self.room_id    #send message to single user
+        
+        result=await self.Verify()
+        if result:
+            await self.JoinGroup()  # Join room group
+            await self.accept() #accept Connection
+            if self.link.user1_active and self.link.user2_active:
+                await self.channel_layer.group_send(
+                    self.sharedLink,{
+                    "type":"problem.message",
+                    "problem":self.link.problem.description,
+                    "winner":self.link.winner,
+                    "username":self.user.username
+                    }    
+                )
+        else:
+           await self.close()  #reject
 
-            # Join room group
-            await self.channel_layer.group_add(
-            self.room_group_name,
-            self.channel_name
-            )
-            await self.accept()
-            if link.user1_active==True and link.user2_active==True:
-                await self.channel_layer.group_send(self.room_group_name, {
-                "type": "problem_message",
-                "problem": prob.description,
-                "winner":link.winner,
-                })
-        except Exception:
-            self.close()
-
+       
     async def disconnect(self, close_code):
 
         # Leave room group
-        await self.channel_layer.group_discard(
-            self.room_group_name,
-            self.channel_name
+         await asyncio.gather(
+            self.channel_layer.group_discard(self.sharedLink,self.channel_name),
+            self.channel_layer.group_discard(self.personalLink,self.channel_name)
+         )
+
+    async def  JoinGroup(self):
+        await asyncio.gather(
+        self.channel_layer.group_add(self.sharedLink,self.channel_name),
+        self.channel_layer.group_add(self.personalLink,self.channel_name)
         )
+       
+    async def Verify(self):
 
-    # Receive message from WebSocket
-    async def receive(self, text_data):
-        text_data_json = json.loads(text_data)
-        message = text_data_json['message']
+        try:
+            self.link=await database_sync_to_async(Link.objects.select_related().get)(pk=self.room_id)
 
+            if self.link.user1.pk==self.scope['user'].pk:
+                self.link.user1_active=True
+            elif self.link.user2.pk==self.scope['user'].pk:
+                self.link.user2_active=True
+            else:
+                raise Exception("Permission Denied")
+            await database_sync_to_async(self.link.save)()
+            return True
+
+        except Exception as e:
+            return False
+
+    
+    async def receive_json(self,data): # Receive message from WebSocket
+        data['username']=self.user.username
         # Send message to room group
-        await self.channel_layer.group_send(
-            self.room_group_name,
-            {
-                'type': 'chat_message',
-                'username': self.user.username,
-                'message': message
-            }
-        )
+        if data['type']=="chat.message":
+            await self.channel_layer.group_send(self.sharedLink,data)   
+        elif data['type']=="system.message":
+            await self.channel_layer.group_send(
+                self.sharedLink,{
+                "type":"chat.message",
+                "username":"system",
+                "message":data['username']+" is compiling and running code"
+                })
+            await self.channel_layer.group_send(self.personalLink,data)
 
-    # Receive message from room group
-    async def chat_message(self, event):
-        type=event['type']
-        message = event['message']
-        username=event['username']
-        # Send message to WebSocket
-        await self.send(text_data=json.dumps({
-            'type':type,
-            'username':username,
-            'message': message
-        }))
+
+    
+    async def chat_message(self, event):  # Receive message from room group
+        await self.send_json(event)   # Send message to WebSocket
     
     async def problem_message(self,event):
-        type=event['type']
-        problem = event['problem']
-        winner=event['winner']  
-        # Send message to WebSocket
-        await self.send(text_data=json.dumps({
-            'type':type,
-            "problem":problem,
-            "winner":winner,
-            
-        }))
+        await self.send_json(event)
 
-    async def system_message(self,event):
-        type=event['type']
-        winner= event['winner']  
-        # Send message to WebSocket
-        await self.send(text_data=json.dumps({
-            'type':type,
-            'winner':winner,
-        }))
-
+    async def system_message(self,event): 
+        await CompileAndRun(**event,input=self.link.problem.input,room_id=self.room_id)
+    
+    async def exec_resp_message(self,event):
+        await self.send_json(event)
+    
+    async def winner_message(self,event):
+        await self.send_json(event)
 
     

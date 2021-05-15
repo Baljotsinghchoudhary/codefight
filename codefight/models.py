@@ -20,7 +20,7 @@ class Link(models.Model):
     user1_active = models.BooleanField(default=False)
     user2_active = models.BooleanField(default=False)
     genration_time = models.DateTimeField(default=timezone.now)
-    winner=models.CharField(max_length=255,default="TO BE DECLARED")
+    winner=models.CharField(max_length=255,blank=True,null=True)
 
 
 # Create your models here.

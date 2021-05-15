@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/3.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
-
+from datetime import timedelta
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -21,6 +21,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '_e+49=_ad5_m14j&n)j7nr=zaz)*(vx-#6v4(hd_$dx740_-$_'
+HACKER_EARTH_CLIENT_SECRET = 'e5ac09b6f3b80181b3bc987ad650a3df8c7845ce'
+HACKEREARTH_URL = "https://api.hackerearth.com/v4/partner/code-evaluation/submissions/"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -103,7 +105,8 @@ REST_FRAMEWORK = {
 #jwt
 SIMPLE_JWT={
     'USER_ID_FIELD':'username',
-    'USER_ID_CLAIM': 'username'
+    'USER_ID_CLAIM': 'username',
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=5),
 }
 
 
@@ -134,7 +137,11 @@ CHANNEL_LAYERS = {
         "BACKEND": "channels.layers.InMemoryChannelLayer"
     }
 }
-
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    }
+}   
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -161,7 +168,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 
