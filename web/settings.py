@@ -48,20 +48,27 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-   # 'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-     
 ]
 
 ROOT_URLCONF = 'web.urls'
 
-#CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:3000',
+] 
+# If this is used, then not need to use `CORS_ORIGIN_ALLOW_ALL = True`
+CORS_ORIGIN_REGEX_WHITELIST = [
+    'http://localhost:3000',
+]
 
 TEMPLATES = [
     {
@@ -105,14 +112,19 @@ SIMPLE_JWT={
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'baljot',
-        'USER': 'postgres',
-        'PASSWORD':'Baljot@12345',
-        'HOST':'',
-        'PORT':'',
-
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'sandhudb', # This is where you put the name of the db file. 
+                 # If one doesn't exist, it will be created at migration time.
     }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': 'baljot',
+    #     'USER': 'postgres',
+    #     'PASSWORD':'Baljot@12345',
+    #     'HOST':'',
+    #     'PORT':'',
+
+    # }
 }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'

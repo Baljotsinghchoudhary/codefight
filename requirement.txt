@@ -19,7 +19,7 @@ djangorestframework-simplejwt==4.6.0
 hyperlink==21.0.0
 idna==2.10
 incremental==21.3.0
-psycopg2==2.8.6
+psycopg2-binary
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pycparser==2.20
@@ -32,7 +32,6 @@ six==1.15.0
 soupsieve==2.2.1
 sqlparse==0.4.1
 Twisted==21.2.0
-twisted-iocpsupport==1.0.1
 txaio==21.2.1
 urllib3==1.26.4
 zope.interface==5.4.0

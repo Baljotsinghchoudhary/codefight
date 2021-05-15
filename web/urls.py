@@ -23,8 +23,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('codefight/',include('codefight.urls')),
     path('accounts/',include('accounts.urls')),
-    
-    
     ]
         
 #diable new feature

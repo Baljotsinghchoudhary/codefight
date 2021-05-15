@@ -8,7 +8,6 @@ import datetime
 from channels.exceptions import DenyConnection
 from django.contrib.auth.models import AnonymousUser
 
-
 class ChatConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):

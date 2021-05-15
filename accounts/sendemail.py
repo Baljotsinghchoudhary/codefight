@@ -7,7 +7,6 @@ from django.core.mail import EmailMessage
 from .models import User
 
 
-
 def SendMailActivation(request,user):
         
     current_site = get_current_site(request)

@@ -93,8 +93,3 @@ class PasswordResetPassword(views.APIView):
             user.save()
             return Response({'detail':'Password Changed SuccessFully'})
         return  Response({"error":"INVALID LINK"})
-
-       
-
-    
-

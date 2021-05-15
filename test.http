@@ -1,0 +1,10 @@
+POST  http://localhost:8000/accounts/register/
+Content-Type: application/json
+
+{
+    "username" : "vikassandhu99",
+    "first_name" : "Vikas",
+    "last_name" : "Sandhu",
+    "email" : "vikassandhu376@gmail.com",
+    "password" : "ihopethiswillwork"
+}
