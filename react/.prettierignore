@@ -1,0 +1,7 @@
+build
+coverage
+.next
+node_modules
+.husky
+
+*.html
