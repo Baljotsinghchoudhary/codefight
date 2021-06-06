@@ -20,9 +20,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '_e+49=_ad5_m14j&n)j7nr=zaz)*(vx-#6v4(hd_$dx740_-$_'
-HACKER_EARTH_CLIENT_SECRET = 'e5ac09b6f3b80181b3bc987ad650a3df8c7845ce'
-HACKEREARTH_URL = "https://api.hackerearth.com/v4/partner/code-evaluation/submissions/"
+SECRET_KEY = ''
+HACKER_EARTH_CLIENT_SECRET = ''
+HACKEREARTH_URL = ""
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -119,15 +119,7 @@ DATABASES = {
         'NAME': 'sandhudb', # This is where you put the name of the db file. 
                  # If one doesn't exist, it will be created at migration time.
     }
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': 'baljot',
-    #     'USER': 'postgres',
-    #     'PASSWORD':'Baljot@12345',
-    #     'HOST':'',
-    #     'PORT':'',
-
-    # }
+   
 }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
@@ -196,10 +188,10 @@ MEDIA_ROOT=os.path.join(BASE_DIR,'media')
 
 
 #email setup
-EMAIL_BACKENED='django.core.mail.backends.smtp.Emailbackend'
-EMAIL_HOST='smtp.gmail.com'
-EMAIL_HOST_USER='baljotdeepika@gmail.com'
-EMAIL_HOST_PASSWORD='puke teid zlzt iykf'
+EMAIL_BACKENED=""
+EMAIL_HOST=''
+EMAIL_HOST_USER=''
+EMAIL_HOST_PASSWORD='
 EMAIL_PORT=587
 EMAIL_USE_TLS=True
 DEFAULT_FROM_EMAIL='CODEFIGHT <noreply@baljot_codefight.com>'
